@@ -1,1 +1,1 @@
-{"buildTime":"2026-08-22T19:31:19.583Z","sources":[],"builtWith":{"toolchain":"0.8.0-alpha.47","types":"0.8.0-alpha.47"}}
+{"buildTime":"2026-08-22T19:33:16.284Z","sources":[{"id":"MangaHost","name":"MangaHost R2","author":"chiraitori","desc":"Extension đọc manga từ Cloudflare R2 MangaHost API","website":"https://github.com/chiraitori","contentRating":"EVERYONE","version":"1.0.0","icon":"icon.png","websiteBaseURL":"http://localhost:8080/api/v1"}],"builtWith":{"toolchain":"0.8.0-alpha.47","types":"0.8.0-alpha.47"}}
