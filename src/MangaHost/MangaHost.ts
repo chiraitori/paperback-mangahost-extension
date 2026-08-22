@@ -15,14 +15,14 @@ import {
 import { MangaHostParser } from './MangaHostParser'
 
 export const MangaHostInfo: SourceInfo = {
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'MangaHost R2',
   icon: 'icon.png',
   author: 'chiraitori',
   authorWebsite: 'https://github.com/chiraitori',
   description: 'Extension đọc manga từ Cloudflare R2 MangaHost API',
   contentRating: ContentRating.EVERYONE,
-  websiteBaseURL: 'https://api.manga.chiraitori.dev/api/v1'
+  websiteBaseURL: 'https://api-manga.chiraitori.dev/api/v1'
 }
 
 export class MangaHost extends Source {
