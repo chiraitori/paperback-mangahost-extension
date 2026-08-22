@@ -464,14 +464,14 @@ exports.MangaHost = exports.MangaHostInfo = void 0;
 const types_1 = require("@paperback/types");
 const MangaHostParser_1 = require("./MangaHostParser");
 exports.MangaHostInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'MangaHost R2',
     icon: 'icon.png',
     author: 'chiraitori',
     authorWebsite: 'https://github.com/chiraitori',
     description: 'Extension đọc manga từ Cloudflare R2 MangaHost API',
     contentRating: types_1.ContentRating.EVERYONE,
-    websiteBaseURL: 'http://localhost:8080/api/v1'
+    websiteBaseURL: 'https://api.manga.chiraitori.dev/api/v1'
 };
 class MangaHost extends types_1.Source {
     constructor() {
