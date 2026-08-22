@@ -1,0 +1,25 @@
+{
+  "name": "paperback-r2-mangahost-extension",
+  "version": "1.0.0",
+  "description": "Paperback iOS Extension for Cloudflare R2 Manga Host",
+  "main": "src/MangaHost/MangaHost.ts",
+  "scripts": {
+    "build": "tsc",
+    "bundle": "paperback bundle",
+    "serve": "paperback serve"
+  },
+  "keywords": [
+    "paperback",
+    "manga",
+    "cloudflare-r2",
+    "extension"
+  ],
+  "author": "MangaHost",
+  "license": "MIT",
+  "dependencies": {
+    "@paperback/types": "^0.8.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
