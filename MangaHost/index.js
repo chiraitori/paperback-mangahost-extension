@@ -464,7 +464,7 @@ exports.MangaHost = exports.MangaHostInfo = void 0;
 const types_1 = require("@paperback/types");
 const MangaHostParser_1 = require("./MangaHostParser");
 exports.MangaHostInfo = {
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'MangaHost R2',
     icon: 'icon.png',
     author: 'chiraitori',
@@ -478,26 +478,29 @@ class MangaHost extends types_1.Source {
         super(...arguments);
         this.apiBase = exports.MangaHostInfo.websiteBaseURL.replace(/\/$/, '');
         this.requestManager = App.createRequestManager({
-            requestsPerSecond: 4,
-            requestTimeout: 20000
+            requestsPerSecond: 2,
+            requestTimeout: 30000
         });
     }
-    async getMangaDetails(mangaId) {
+    async getMangaResponse(mangaId) {
+        if (this.mangaCache?.id === mangaId && this.mangaCache.expiresAt > Date.now()) {
+            return this.mangaCache.json;
+        }
         const request = App.createRequest({
             url: `${this.apiBase}/manga/${mangaId}`,
             method: 'GET'
         });
-        const response = await this.requestManager.schedule(request, 1);
+        const response = await this.requestManager.schedule(request, 3);
         const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+        this.mangaCache = { id: mangaId, expiresAt: Date.now() + 10000, json };
+        return json;
+    }
+    async getMangaDetails(mangaId) {
+        const json = await this.getMangaResponse(mangaId);
         return MangaHostParser_1.MangaHostParser.parseMangaDetails(json, mangaId, App);
     }
     async getChapters(mangaId) {
-        const request = App.createRequest({
-            url: `${this.apiBase}/manga/${mangaId}`,
-            method: 'GET'
-        });
-        const response = await this.requestManager.schedule(request, 1);
-        const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+        const json = await this.getMangaResponse(mangaId);
         return MangaHostParser_1.MangaHostParser.parseChapterList(json, mangaId, App);
     }
     async getChapterDetails(mangaId, chapterId) {
@@ -505,7 +508,7 @@ class MangaHost extends types_1.Source {
             url: `${this.apiBase}/chapter/${chapterId}`,
             method: 'GET'
         });
-        const response = await this.requestManager.schedule(request, 1);
+        const response = await this.requestManager.schedule(request, 3);
         const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
         return MangaHostParser_1.MangaHostParser.parseChapterDetails(json, mangaId, chapterId, App);
     }
@@ -516,7 +519,7 @@ class MangaHost extends types_1.Source {
             url: `${this.apiBase}/manga?q=${encodeURIComponent(searchTitle)}&page=${page}&limit=20`,
             method: 'GET'
         });
-        const response = await this.requestManager.schedule(request, 1);
+        const response = await this.requestManager.schedule(request, 3);
         const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
         return MangaHostParser_1.MangaHostParser.parseSearchResults(json, App);
     }
@@ -530,11 +533,13 @@ class MangaHost extends types_1.Source {
         const latestSection = App.createHomeSection({
             id: 'latest',
             title: 'Mới Cập Nhật',
+            type: 'singleRowNormal',
             containsMoreItems: true
         });
         const popularSection = App.createHomeSection({
             id: 'popular',
             title: 'Xem Nhiều Nhất',
+            type: 'singleRowNormal',
             containsMoreItems: true
         });
         try {
@@ -542,7 +547,7 @@ class MangaHost extends types_1.Source {
                 url: `${this.apiBase}/home`,
                 method: 'GET'
             });
-            const response = await this.requestManager.schedule(request, 1);
+            const response = await this.requestManager.schedule(request, 3);
             const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
             const data = json.data;
             if (data?.featured && data.featured.length > 0) {
@@ -587,7 +592,7 @@ class MangaHost extends types_1.Source {
             url: `${this.apiBase}/manga?sort=${sortBy}&page=${page}&limit=20`,
             method: 'GET'
         });
-        const response = await this.requestManager.schedule(request, 1);
+        const response = await this.requestManager.schedule(request, 3);
         const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
         return MangaHostParser_1.MangaHostParser.parseSearchResults(json, App);
     }
@@ -659,7 +664,7 @@ class MangaHostParser {
      */
     static parseChapterDetails(json, mangaId, chapterId, App) {
         const rawChapter = json.data?.chapter || json.chapter || json;
-        const pages = rawChapter.pages || [];
+        const pages = (rawChapter.pages || []).filter((page) => typeof page === 'string' && /^https?:\/\//i.test(page));
         return App.createChapterDetails({
             id: chapterId,
             mangaId: mangaId,
