@@ -27,7 +27,7 @@ export interface MangaHostChapterItem {
   title?: string;
   volume?: number;
   language?: string;
-  pages: string[];
+  pages?: string[];
   pageCount: number;
   createdAt: string;
 }
@@ -100,7 +100,9 @@ export class MangaHostParser {
    */
   static parseChapterDetails(json: any, mangaId: string, chapterId: string, App: any): any {
     const rawChapter: MangaHostChapterItem = json.data?.chapter || json.chapter || json;
-    const pages: string[] = rawChapter.pages || [];
+    const pages: string[] = (rawChapter.pages || []).filter(
+      (page) => typeof page === 'string' && /^https?:\/\//i.test(page)
+    );
 
     return App.createChapterDetails({
       id: chapterId,

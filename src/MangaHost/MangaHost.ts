@@ -15,7 +15,7 @@ import {
 import { MangaHostParser } from './MangaHostParser'
 
 export const MangaHostInfo: SourceInfo = {
-  version: '1.0.2',
+  version: '1.0.3',
   name: 'MangaHost R2',
   icon: 'icon.png',
   author: 'chiraitori',
@@ -27,31 +27,35 @@ export const MangaHostInfo: SourceInfo = {
 
 export class MangaHost extends Source {
   private apiBase: string = MangaHostInfo.websiteBaseURL.replace(/\/$/, '')
+  private mangaCache?: { id: string; expiresAt: number; json: any }
 
   requestManager = App.createRequestManager({
-    requestsPerSecond: 4,
-    requestTimeout: 20000
+    requestsPerSecond: 2,
+    requestTimeout: 30000
   })
 
-  override async getMangaDetails(mangaId: string): Promise<SourceManga> {
+  private async getMangaResponse(mangaId: string): Promise<any> {
+    if (this.mangaCache?.id === mangaId && this.mangaCache.expiresAt > Date.now()) {
+      return this.mangaCache.json
+    }
+
     const request = App.createRequest({
       url: `${this.apiBase}/manga/${mangaId}`,
       method: 'GET'
     })
-
-    const response = await this.requestManager.schedule(request, 1)
+    const response = await this.requestManager.schedule(request, 3)
     const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
+    this.mangaCache = { id: mangaId, expiresAt: Date.now() + 10000, json }
+    return json
+  }
+
+  override async getMangaDetails(mangaId: string): Promise<SourceManga> {
+    const json = await this.getMangaResponse(mangaId)
     return MangaHostParser.parseMangaDetails(json, mangaId, App)
   }
 
   override async getChapters(mangaId: string): Promise<Chapter[]> {
-    const request = App.createRequest({
-      url: `${this.apiBase}/manga/${mangaId}`,
-      method: 'GET'
-    })
-
-    const response = await this.requestManager.schedule(request, 1)
-    const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
+    const json = await this.getMangaResponse(mangaId)
     return MangaHostParser.parseChapterList(json, mangaId, App)
   }
 
@@ -61,7 +65,7 @@ export class MangaHost extends Source {
       method: 'GET'
     })
 
-    const response = await this.requestManager.schedule(request, 1)
+    const response = await this.requestManager.schedule(request, 3)
     const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
     return MangaHostParser.parseChapterDetails(json, mangaId, chapterId, App)
   }
@@ -75,7 +79,7 @@ export class MangaHost extends Source {
       method: 'GET'
     })
 
-    const response = await this.requestManager.schedule(request, 1)
+    const response = await this.requestManager.schedule(request, 3)
     const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
     return MangaHostParser.parseSearchResults(json, App)
   }
@@ -91,12 +95,14 @@ export class MangaHost extends Source {
     const latestSection = App.createHomeSection({
       id: 'latest',
       title: 'Mới Cập Nhật',
+      type: 'singleRowNormal',
       containsMoreItems: true
     })
 
     const popularSection = App.createHomeSection({
       id: 'popular',
       title: 'Xem Nhiều Nhất',
+      type: 'singleRowNormal',
       containsMoreItems: true
     })
 
@@ -105,7 +111,7 @@ export class MangaHost extends Source {
         url: `${this.apiBase}/home`,
         method: 'GET'
       })
-      const response = await this.requestManager.schedule(request, 1)
+      const response = await this.requestManager.schedule(request, 3)
       const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
       const data = json.data
 
@@ -161,7 +167,7 @@ export class MangaHost extends Source {
       method: 'GET'
     })
 
-    const response = await this.requestManager.schedule(request, 1)
+    const response = await this.requestManager.schedule(request, 3)
     const json = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
     return MangaHostParser.parseSearchResults(json, App)
   }
