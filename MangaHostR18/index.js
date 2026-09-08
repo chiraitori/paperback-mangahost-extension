@@ -501,7 +501,7 @@ class MangaHostParser {
     /**
      * Parse chapter list into Paperback Chapter[]
      */
-    static parseChapterList(json, mangaId, App) {
+    static parseChapterList(json, mangaId, App, group = 'MangaHost R2') {
         const rawChapters = json.data?.chapters || json.chapters || [];
         const chapters = [];
         for (const chap of rawChapters) {
@@ -512,7 +512,7 @@ class MangaHostParser {
                 volume: chap.volume,
                 langCode: chap.language || 'vi',
                 time: new Date(chap.createdAt),
-                group: 'MangaHost R2'
+                group
             }));
         }
         return chapters;
@@ -595,7 +595,7 @@ class MangaHostR18 extends types_1.Source {
     }
     async getChapters(mangaId) {
         const json = await this.getMangaResponse(mangaId);
-        return MangaHostParser_1.MangaHostParser.parseChapterList(json, mangaId, App);
+        return MangaHostParser_1.MangaHostParser.parseChapterList(json, mangaId, App, 'MangaHost R18');
     }
     async getChapterDetails(mangaId, chapterId) {
         const request = App.createRequest({
