@@ -10,6 +10,7 @@ Extension tích hợp cho ứng dụng **Paperback** trên iPhone / iPad để �
 - **Tìm kiếm & Phân trang**: Tìm kiếm theo tên truyện, tác giả, hỗ trợ phân trang vô tận.
 - **Chi tiết Manga & Chapter**: Hiển thị ảnh bìa, tóm tắt, tác giả, thể loại và danh sách chapter.
 - **Đọc truyện tốc độ cao**: Tải trực tiếp ảnh các trang truyện từ Cloudflare R2 CDN không bị giới hạn băng thông.
+- **MangaHost R18**: Bản source riêng kết nối `https://r18.rinka.id.vn/api/v1`, không ảnh hưởng source MangaHost thường.
 
 ---
 
