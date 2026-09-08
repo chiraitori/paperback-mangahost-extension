@@ -56,7 +56,7 @@ export class MangaHostR18 extends Source {
 
   override async getChapters(mangaId: string): Promise<Chapter[]> {
     const json = await this.getMangaResponse(mangaId)
-    return MangaHostParser.parseChapterList(json, mangaId, App)
+    return MangaHostParser.parseChapterList(json, mangaId, App, 'MangaHost R18')
   }
 
   override async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {

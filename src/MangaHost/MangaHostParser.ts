@@ -74,7 +74,7 @@ export class MangaHostParser {
   /**
    * Parse chapter list into Paperback Chapter[]
    */
-  static parseChapterList(json: any, mangaId: string, App: any): any[] {
+  static parseChapterList(json: any, mangaId: string, App: any, group = 'MangaHost R2'): any[] {
     const rawChapters: MangaHostChapterItem[] = json.data?.chapters || json.chapters || [];
     const chapters: any[] = [];
 
@@ -87,7 +87,7 @@ export class MangaHostParser {
           volume: chap.volume,
           langCode: chap.language || 'vi',
           time: new Date(chap.createdAt),
-          group: 'MangaHost R2'
+          group
         })
       );
     }
