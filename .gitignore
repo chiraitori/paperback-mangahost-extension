@@ -4,5 +4,6 @@ yarn-debug.log*
 yarn-error.log*
 dist/
 bundles/
+src/MangaHostR18/
 .DS_Store
 Thumbs.db
